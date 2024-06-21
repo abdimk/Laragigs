@@ -1,0 +1,31 @@
+https://devcloud.intel.com/oneapi/get_started/renderingToolkitSamples/
+https://receive-sms-free.cc/Free-USA-Phone-Number/19033927968/
+
+
+
+#!/bin/bash
+
+# Ensure ~/.local/bin is in the PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# Install yt-dlp if not already installed
+pip install --user yt-dlp
+
+# Define the YouTube video URL
+YOUTUBE_URL="https://www.youtube.com/watch?v=wL8DVHuWI7Y&pp=ygUNbWVtb3J5IHJlYm9vdA%3D%3D"
+
+# Define the output directory and file name
+OUTPUT_DIR="$HOME/videos"
+mkdir -p "$OUTPUT_DIR"
+OUTPUT_FILE="$OUTPUT_DIR/video.webm"
+
+# Download the video using yt-dlp
+yt-dlp -f bestvideo+bestaudio --merge-output-format webm -o "$OUTPUT_FILE" "$YOUTUBE_URL"
+
+# Define the RTMP URL and stream key provided by Telegram
+SERVER_URL="rtmps://dc4-1.rtmp.t.me/s/"
+STREAM_KEY="1581845380:Aaj1wFu67PgJ0jdvbCbeWQ"
+
+# Stream the downloaded .webm video using FFmpeg
+ffmpeg -re -i "$OUTPUT_FILE" -c:v libx264 -preset veryfast -b:v 3000k -maxrate 3000k -bufsize 6000k -c:a aac -b:a 128k -f flv "$SERVER_URL$STREAM_KEY"
+

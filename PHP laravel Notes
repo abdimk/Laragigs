@@ -1,0 +1,27 @@
+Laravel cli code sheet
+
+
+to start the server 
+=> php artisan serve
+
+to create migrations for a table 
+
+php artisan make:migraion table_name
+
+to refresh migration and to seed 
+
+
+php artisan migration:refresh --seed
+
+
+
+to run all the seeders 
+
+php artisan db:seed
+
+
+to run specific seeders 
+
+php artisan db:seed --class=UserTableSeeders
+
+
