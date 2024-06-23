@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\Listing;
+
 
 class ListingController extends Controller
 {
@@ -11,7 +13,7 @@ class ListingController extends Controller
     public function index(){
         return view('listings.index',[
             // 'listings' =>Listing::all()
-            'listings'=>Listing::latest()->filter(request(['tag', 'search']))->get()
+            'listings'=>Listing::latest()->filter(request(['tag', 'search']))->paginate(6)
             
         ]);
     }
@@ -29,4 +31,32 @@ class ListingController extends Controller
     public function create(){
         return view('listings.create');
     }
+
+
+    // Store listing form
+    public function store(Request $request){
+        // dd($request->all());
+        $formFields = $request->validate([
+            'title' => 'required',
+            'company' => ['required', Rule::unique('listings', 'company')],
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'location' => 'required',
+            'website' => 'required',
+            'email' => ['required','email'],
+            'tags' => 'required',
+            'description' => 'required'
+        ]);
+
+        if($request->hasFile('logo')){
+            $formFields['logo'] = $request->file('logo')->store('logos','public');
+        }
+
+        Listing::create($formFields);
+
+        return redirect('/')->with('message','Listing created sucessfully!');
+    }
+
+
+
+    
 }
