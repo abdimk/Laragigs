@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Listing;
-
+use Symfony\Component\CssSelector\Node\FunctionNode;
 
 class ListingController extends Controller
 {
@@ -50,6 +50,8 @@ class ListingController extends Controller
         if($request->hasFile('logo')){
             $formFields['logo'] = $request->file('logo')->store('logos','public');
         }
+       
+        $formFields['user_id'] = auth()->id();
 
         Listing::create($formFields);
 
@@ -64,6 +66,11 @@ class ListingController extends Controller
 
     // Update the listing form
     public function update(Request $request, Listing $listing){
+
+        //Make sure the logedd user is the owner 
+        if($listing->user_id != auth()->id()){
+            abort(403,'Unautorized action');
+        }
         // dd($request->all());
         $formFields = $request->validate([
             'title' => 'required',
@@ -80,6 +87,8 @@ class ListingController extends Controller
             $formFields['logo'] = $request->file('logo')->store('logos','public');
         }
 
+        $formFields['user_id'] = auth()->id();
+
         $listing->update($formFields);
 
         return back()->with('message','Listing updated sucessfully!');
@@ -87,10 +96,20 @@ class ListingController extends Controller
 
 
     public function destroy(Listing $listing){
-        $listing->delete();
+        //Make sure the logedd user is the owner 
+        if($listing->user_id != auth()->id){
+            abort(403,'Unautorized action');
+        }
 
+        $listing->delete();
         return redirect('/')->with('message','List has been deleted sucessfully');
 
+    }
+
+
+    // Manage Listings 
+    public function manage(){
+        return view('listings.manage', ['listings'=>auth()->user()->listings()->get()]);
     }
 
 
