@@ -24,4 +24,12 @@ to run specific seeders
 
 php artisan db:seed --class=UserTableSeeders
 
+to create a new controller 
 
+php artisan make:controller [ControllerName]
+
+
+https://www.youtube.com/watch?v=MT-GJQIY3EU
+
+
+page pagination
